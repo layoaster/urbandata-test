@@ -1,0 +1,20 @@
+[flake8]
+ignore =
+    # E402: module level import not at top of file (to allow dunders before import as per PEP8)
+    E402,
+    # W503: line break before binary operator (rule outdated)
+    W503,
+    # E226 missing whitespace around arithmetic operator (to allow doc[2*i])
+    E226
+
+max-line-length = 100
+exclude =
+    .git,
+    */migrations/*,
+    urbandata/static,
+    urbandata/templates,
+    docs
+
+import-order-style = edited
+application-import-names = urbandata config tests
+application-package-names = django

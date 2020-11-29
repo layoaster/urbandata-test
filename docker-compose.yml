@@ -1,0 +1,118 @@
+# UrbanData Test backend [development]
+version: "3.7"
+
+services:
+
+  #---- Web service ----#
+  urbandata-test:
+    build:
+      context: .
+      target: urbandata-test-dev
+    image: urbandata-test-dev
+    env_file:
+     - .env
+    environment:
+      - TERM=xterm
+      - LC_ALL=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US.UTF-8
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+    ports:
+      - "8000:8000"
+    networks:
+      - default-net
+    depends_on:
+      - postgres
+
+
+  #---- Databases ----#
+  postgres:
+    image: postgres:10.10-alpine
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - type: volume
+        source: postgres-urbandata-test-data
+        target: /var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -d ${DB_DATABASE}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - default-net
+
+
+  #---- Django Management----#
+  manage:
+    image: urbandata-test-dev:latest
+    env_file:
+     - .env
+    environment:
+      - LC_ALL=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US.UTF-8
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+        # Support for ipython history
+      - type: bind
+        source: ${HOME}/.ipython/profile_default/
+        target: /root/.ipython/profile_default/
+    networks:
+      - default-net
+    depends_on:
+      - postgres
+    entrypoint: python manage.py
+
+
+  #---- Dev's toolbox ----#
+  flake8:
+    image: urbandata-test-dev:latest
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+        read_only: true
+    entrypoint: flake8
+
+  black:
+    image: urbandata-test-dev:latest
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+        read_only: true
+    entrypoint: black --config .black --check --diff .
+
+  format:
+    image: urbandata-test-dev:latest
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+    entrypoint: black --config .black .
+
+  mypy:
+    image: urbandata-test-dev:latest
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+        read_only: true
+    entrypoint: mypy --show-error-codes --pretty config urbandata
+
+
+volumes:
+  postgres-urbandata-test-data:
+
+networks:
+  default-net:

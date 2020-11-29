@@ -13,6 +13,16 @@ always be created to go without containers.
 Since the applications requires several containers the project supports
 [docker-compose][docker-compose] to help with local containers orchestration.
 
+The *Dockerfile* makes use of multi-stage builds so it's recommended (on
+development/local environment only!) to enable [Buildkit][buildkit] in order to
+get faster builds. To enable it these two env-vars should be set before running
+*docker*/*docker-compose*.
+
+```shell
+DOCKER_BUILDKIT=1
+COMPOSE_DOCKER_CLI_BUILD=1
+```
+
 
 ## Configuration
 The application supports configuration via environment variables. In particular,
@@ -24,6 +34,8 @@ Sample `.env` file:
 ```shell
 #### DJANGO APP
 DJANGO_SETTINGS_MODULE=config.settings.dev
+DJANGO_SECRET_KEY=valid-secret-key
+DJANGO_LOG_LEVEL=DEBUG
 
 #### DATABASE CLIENT/SERVER
 DB_HOST=postgres
@@ -61,6 +73,7 @@ set of Python styling rules:
 
 
 [black]: https://github.com/psf/black
+[buildkit]: https://docs.docker.com/develop/develop-images/build_enhancements/
 [docker-compose]: https://docs.docker.com/compose/
 [env-files]: https://vsupalov.com/docker-arg-env-variable-guide/#the-dot-env-file-env
 [env-files-compose]: https://docs.docker.com/compose/env-file/

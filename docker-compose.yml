@@ -50,7 +50,7 @@ services:
       - default-net
 
 
-  #---- Django Management----#
+  #---- Django Management ----#
   manage:
     image: urbandata-test-dev:latest
     env_file:
@@ -72,6 +72,27 @@ services:
     depends_on:
       - postgres
     entrypoint: python manage.py
+
+
+  #---- Testing ----#
+  test-unit:
+    image: urbandata-test-dev:latest
+    env_file:
+     - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.test
+      - LC_ALL=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US.UTF-8
+    volumes:
+      - type: bind
+        source: ./
+        target: /opt/urbandata-test
+    networks:
+      - default-net
+    depends_on:
+      - postgres
+    entrypoint: pytest
 
 
   #---- Dev's toolbox ----#

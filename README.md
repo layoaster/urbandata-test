@@ -23,6 +23,14 @@ DOCKER_BUILDKIT=1
 COMPOSE_DOCKER_CLI_BUILD=1
 ```
 
+You can get the **service up and running** with the command:
+
+```shell
+$ docker-compose up -d urbandata-test
+```
+
+The API server listens on `http://localhost:8000`.
+
 ### Database *Migrations* and Django *manage* command
 To run migrations with **Docker** use the **docker-compose** service `manage`
 with the `doker-compose run` command. Some examples:
@@ -98,11 +106,36 @@ set of Python styling rules:
   ```
 
 
-## Test/Evaluation Notes
+## Documentation
 
-* The API server is listening on the port `8080`.
-* The API is fully configured to support authentication with Bearer Tokens.
+### API
+The API is documented with the `Swagger/OpenAPI 3.0` specification.
+
+You can get the API documentation and **play with the API** by running the
+`swagger-ui` service in docker-compose:
+
+```shell
+$ docker-compose up -d swagger-ui
+```
+And visiting:
+```
+http://locahost:8080/swagger/
+```
+
+
+## Test/Evaluation Notes
+* I can't see the added value of deploying it to the Internet when you can ge it
+running locally with `docker-compose`. However, I setup a production ready *Dockerfile*
+that could be used on the tipical CI/CD service to be deployed in any platform
+that support Docker containers (orchestration).
+* Remember to first create the `.env` file before running any container.
+* The API is fully configured to support authentication with *Bearer Tokens*.
 However, for evaluation purposes the endpoints are exposed without any auth.
+* Due to time constraints and lack of previous experience I did not setup **PostGIS**
+to create the corresponding *Point* field on the `Asset` model.
+I saw that Django and DRF have support for it but I decided not to spend time
+with a setup that might not work well out of the box.
+
 
 
 [black]: https://github.com/psf/black

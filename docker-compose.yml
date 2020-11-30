@@ -131,6 +131,34 @@ services:
         read_only: true
     entrypoint: mypy --show-error-codes --pretty config urbandata
 
+  cors-anywhere:
+    build:
+      context: build/dev
+      dockerfile: Dockerfile.cors-anywhere
+    environment:
+      - PORT=8081
+    ports:
+      - "8081:8081"
+    networks:
+      - default-net
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    environment:
+      - BASE_URL=/swagger
+      - SWAGGER_JSON=/app/urbandata.yaml
+    volumes:
+      - type: bind
+        source: ./docs/openapi
+        target: /app
+        read_only: true
+    ports:
+      - "8080:8080"
+    networks:
+      - default-net
+    depends_on:
+      - cors-anywhere
+
 
 volumes:
   postgres-urbandata-test-data:

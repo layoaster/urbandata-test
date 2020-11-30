@@ -32,7 +32,6 @@ BASE_DIR = root()
 # Django apps directory.
 APPS_DIR = root("urbandata")
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = getenv("DJANGO_SECRET_KEY", "override this key")
 
@@ -43,6 +42,9 @@ ALLOWED_HOSTS: List[str] = []
 
 # https://docs.djangoproject.com/en/2.2/ref/settings/#wsgi-application
 WSGI_APPLICATION = "config.wsgi.application"
+
+# To support URL's not ending in a slash.
+APPEND_SLASH = False
 
 
 # Internationalization

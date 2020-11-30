@@ -1,0 +1,12 @@
+# Service to bypass CORS protection built-in in browser. This allows make requests
+# from the swagger-ui service to any server
+FROM node:13.10.1-alpine3.11
+
+WORKDIR /cors-anywhere
+
+RUN set -x \
+    && apk --no-cache add git \
+    && git clone https://github.com/Rob--W/cors-anywhere.git /cors-anywhere \
+    && npm install
+
+ENTRYPOINT ["npm", "start"]

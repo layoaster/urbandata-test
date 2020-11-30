@@ -20,7 +20,7 @@ from django.urls import include, path
 
 urlpatterns = [
     # Bike
-    path("api/urbandata/asset/", include(("urbandata.assets.urls", "assets"), namespace="asset")),
+    path("api/urbandata/asset", include(("urbandata.assets.urls", "assets"), namespace="asset")),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

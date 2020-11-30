@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: UrbanData's API
+  description: RESTful API of the UrbanData microservice.
+  version: '0.1'
+  contact:
+    email: tech@urbandata.com
+servers:
+  - url: 'http://localhost:8081/http://urbandata-test:8000/api/urbandata'
+    description: Development server
+  - url: 'http://localhost:8081/https://www.urbandata.com/api/urbandata'
+    description: Production server
+tags:
+  - name: asset
+    description: Asset operations
+paths:
+  /asset:
+    get:
+      tags:
+        - asset
+      summary: Assets listing.
+      responses:
+       '200':
+          description: Succesfull operation, resources retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/AssetResponseScheme'
+    post:
+      tags:
+        - asset
+      summary: Asset's creation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetScheme'
+      responses:
+        '201':
+          description: Succesfull operation, resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetResponseScheme'
+        '400':
+          $ref: '#/components/responses/InvalidInputData'
+
+  /asset/{Id}:
+    get:
+      tags:
+        - asset
+      summary: Asset retrieval.
+      parameters:
+        - in: path
+          name: Id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the asset to retrieve
+      responses:
+        '200':
+          description: Succesfull operation, resource retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetResponseScheme'
+        '404':
+          description: Resource not found.
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    InvalidInputData:
+      description: Invalid input data/format
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/InputDataErrorScheme'
+
+  schemas:
+    AssetScheme:
+      type: object
+      required:
+        - geom_lat
+        - geom_long
+        - area
+      properties:
+        geom_lat:
+          type: number
+          format: float
+          minimum: -90.0
+          maximum: 90.0
+        geom_long:
+          type: number
+          format: float
+          minimum: -180.0
+          maximum: 180.0
+        address:
+          type: string
+        area:
+          type: integer
+          minimum: 0
+        rooms:
+          type: integer
+          minimum: 0
+        garage:
+          type: boolean
+        other:
+          type: object
+          additionalProperties: true
+
+      example:
+        geom_lat: 50.456743
+        geom_long: -3.567895
+        address: "valid address text"
+        area: 120
+        rooms: 4
+        garage: true
+    AssetResponseScheme:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+        - $ref: '#/components/schemas/AssetScheme'
+      example:
+        id: 1
+    InputDataErrorScheme:
+      type: object
+      properties:
+        field_name:
+          type: array
+          items:
+            type: string
+      example:
+        area:
+          - "This field is required."
+        garage:
+          - "Must be a valid boolean."

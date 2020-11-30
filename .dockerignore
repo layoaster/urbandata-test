@@ -16,7 +16,7 @@ docker-compose.yml
 .mypy_cache
 .coverage
 .coverage.*
-
+tests/test-results
 
 # App settings
 .env

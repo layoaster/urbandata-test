@@ -8,3 +8,7 @@ from .base import *  # noqa
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+# django-extensions
+# ------------------------------------------------------------------------------
+SHELL_PLUS = "ipython"
